@@ -1,0 +1,111 @@
+import React, { useContext, useState } from 'react'
+import noteContext from '../../../context/note/NoteContext'
+import NoteItem from './NoteItem'
+import AddNote from './AddNote'
+import Modal from 'react-bootstrap/Modal';
+import Button from 'react-bootstrap/Button';
+
+const Note = () => {
+    const { notes, updateTheNote } = useContext(noteContext)
+    const [updateNoteValue, setUpdateNoteValue] = useState({ title: " ", description: " ", tag: " ", _id: '' })
+    const [titleError, setTitleError] = useState(false)
+    const [tagError, setTagError] = useState(false)
+    const [show, setShow] = useState(false)
+    const [descriptionError, setDescriptionError] = useState(false)
+
+    const updateNote = (note) => {
+        setShow(true)
+        const { title, description, tag, _id } = note
+        setUpdateNoteValue({ title, description, tag, _id })
+    }
+
+    const handleChange = (e) => {
+        setUpdateNoteValue({ ...updateNoteValue, [e.target.name]: e.target.value })
+    }
+
+
+    const title = () => {
+        if (updateNoteValue.title.length < 3) {
+            setTitleError(true)
+        }
+        else {
+            setTitleError(false)
+        }
+    }
+    const tag = () => {
+        if (updateNoteValue.tag.length < 3) {
+            setTagError(true)
+        }
+        else {
+            setTagError(false)
+        }
+    }
+    const description = () => {
+        if (updateNoteValue.description.length < 3) {
+            setDescriptionError(true)
+        }
+        else {
+            setDescriptionError(false)
+        }
+    }
+
+    const submitData = () => {
+        title()
+        tag()
+        description()
+        if (!((updateNoteValue.title.length < 3) || (updateNoteValue.tag.length < 3) || (updateNoteValue.description.length < 3))) {
+            updateTheNote(updateNoteValue)
+            setShow(false);
+        }
+    }
+
+    return (
+        <>
+            <AddNote />
+
+            <Modal
+                size="lg"
+                aria-labelledby="contained-modal-title-vcenter"
+                centered show={show} onHide={() => { setShow(false); setDescriptionError(false); setTagError(false); setTitleError(false) }}
+            >
+                <Modal.Header closeButton>
+                    <Modal.Title>Verify OTP</Modal.Title>
+                </Modal.Header>
+                <Modal.Body>
+                    <form onSubmit={submitData}>
+                        <div className="mb-3">
+                            <label htmlFor="title" className="form-label">Title</label>
+                            <input name='title' type="text" className="form-control" style={{ borderColor: titleError ? '#dc3545' : '#ced4da' }} id="title" value={updateNoteValue.title} onChange={handleChange} />
+                            <div style={{ height: '30px', color: '#dc3545' }} >{titleError ? 'Title length must be at least 3 characters.' : ''}</div>
+                        </div>
+                        <div className="mb-3">
+                            <label htmlFor="tag" className="form-label">Tag</label>
+                            <input type="text" name='tag' className="form-control" style={{ borderColor: tagError ? '#dc3545' : '#ced4da' }} id="tag" value={updateNoteValue.tag} onChange={handleChange} />
+                            <div style={{ height: '30px', color: '#dc3545' }} >{tagError ? 'Tag length must be at least 3 characters.' : ''}</div>
+                        </div>
+                        <div className="mb-3">
+                            <label htmlFor="description" className="form-label">Description</label>
+                            <input type='text' name='description' className="form-control" style={{ borderColor: descriptionError ? '#dc3545' : '#ced4da' }} id="description" value={updateNoteValue.description} onChange={handleChange} />
+                            <div style={{ height: '30px', color: '#dc3545' }} >{descriptionError ? "Description length must be at least 5 characters." : ''}</div>
+                        </div>
+                    </form>
+                </Modal.Body>
+                <Modal.Footer>
+                    <Button variant="secondary" onClick={() => { setShow(false); setDescriptionError(false); setTagError(false); setTitleError(false) }}>
+                        Close
+                    </Button>
+                    <button type="button" onClick={submitData} className="btn btn-primary">Update Note</button>
+                </Modal.Footer>
+            </Modal>
+
+
+            <div className='d-flex flex-wrap'  >
+                {notes.map((item) => {
+                    return <NoteItem key={item._id} updateNote={updateNote} note={item} />
+                })}
+            </div>
+        </>
+    )
+}
+
+export default Note

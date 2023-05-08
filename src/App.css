@@ -1,0 +1,31 @@
+/* Alert Component style */
+.progress-bar {
+    animation: progress-bar 6s ease-in-out;
+}
+
+@keyframes progress-bar {
+    from {
+        width: 0%;
+    }
+
+    to {
+        width: 100%;
+    }
+}
+
+/* Nav Component style */
+@media (min-width:992px) {
+    .navbar-nav {
+        flex: 1;
+    }
+
+    .list-div {
+        display: flex;
+        width: 100%;
+    }
+
+    .list-div-first-li{
+        margin-left: auto;
+    }
+
+}
