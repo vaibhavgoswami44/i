@@ -4,9 +4,11 @@ import NoteItem from './NoteItem'
 import AddNote from './AddNote'
 import Modal from 'react-bootstrap/Modal';
 import Button from 'react-bootstrap/Button';
+import alertContext from '../../../context/alert/AlertContext';
 
 const Note = () => {
     const { notes, updateTheNote } = useContext(noteContext)
+    const { theme } = useContext(alertContext)
     const [updateNoteValue, setUpdateNoteValue] = useState({ title: " ", description: " ", tag: " ", _id: '' })
     const [titleError, setTitleError] = useState(false)
     const [tagError, setTagError] = useState(false)
@@ -68,10 +70,10 @@ const Note = () => {
                 aria-labelledby="contained-modal-title-vcenter"
                 centered show={show} onHide={() => { setShow(false); setDescriptionError(false); setTagError(false); setTitleError(false) }}
             >
-                <Modal.Header closeButton>
-                    <Modal.Title>Verify OTP</Modal.Title>
-                </Modal.Header>
-                <Modal.Body>
+                <Modal.Header closeButton className={`bg-${theme}`}>
+                    <Modal.Title>Update Note</Modal.Title>
+                </Modal.Header >
+                <Modal.Body className={`bg-${theme}`}>
                     <form onSubmit={submitData}>
                         <div className="mb-3">
                             <label htmlFor="title" className="form-label">Title</label>
@@ -90,7 +92,7 @@ const Note = () => {
                         </div>
                     </form>
                 </Modal.Body>
-                <Modal.Footer>
+                <Modal.Footer className={`bg-${theme}`}>
                     <Button variant="secondary" onClick={() => { setShow(false); setDescriptionError(false); setTagError(false); setTitleError(false) }}>
                         Close
                     </Button>
@@ -99,7 +101,7 @@ const Note = () => {
             </Modal>
 
 
-            <div className='d-flex flex-wrap'  >
+            <div className='d-flex flex-wrap mb-5'  >
                 {notes.map((item) => {
                     return <NoteItem key={item._id} updateNote={updateNote} note={item} />
                 })}

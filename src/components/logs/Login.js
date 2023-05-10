@@ -1,11 +1,12 @@
 import React, { useContext, useState } from 'react'
-import { Link, useNavigate } from 'react-router-dom'
+import { Link, useLocation, useNavigate } from 'react-router-dom'
 import userContext from '../../context/user/UserContext'
 
 const Login = () => {
     const { login } = useContext(userContext)
     const navigate = useNavigate()
-    const [loginCredentials, setLoginCredentials] = useState({ email: '', password: '' })
+    const location = useLocation()
+    const [loginCredentials, setLoginCredentials] = useState({ email: location.state ? location.state.email : '', password: '' })
     const [showHidePassword, setshowHidePassword] = useState('password')
     const handleChange = (e) => {
         setLoginCredentials({ ...loginCredentials, [e.target.name]: e.target.value })
@@ -36,11 +37,15 @@ const Login = () => {
                         </label>
                     </div>
                 </div>
-                <button type="submit" className="btn btn-primary">Login</button>
+                <div className='d-flex flex-column justify-content-center align-items-center'>
+                    <button type="submit" className="btn btn-primary">Login</button>
+                </div>
             </form>
-            <Link to="/forgot-password" role="button">Forgot Your Password Reset Here</Link>
-            <h6 className='mt-3' >Not Have an account</h6>
-            <Link className='btn btn-primary' to="/signup" role="button">SignUp here</Link>
+            <div className='d-flex flex-column justify-content-center align-items-center'>
+                <Link to="/forgot-password" state={loginCredentials.email} >Forgot Your Password?</Link>
+                <h6 className='mt-3' >Not Have an account</h6>
+                <Link className='btn btn-primary' to="/signup" role="button">SignUp here</Link>
+            </div>
         </>
     )
 }

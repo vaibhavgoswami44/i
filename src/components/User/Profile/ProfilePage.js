@@ -8,7 +8,7 @@ import { OverlayTrigger, Tooltip } from 'react-bootstrap';
 
 const ProfilePage = () => {
   const { getLoggedinUserData, updateUserDetails } = useContext(userContext);
-  const { updateAlert } = useContext(alertContext)
+  const { updateAlert, theme } = useContext(alertContext)
   //user details
   const [user, setUser] = useState({ profilePicture: '', birthDate: '', gender: '', name: '' });
   const [imageSrc, setImageSrc] = useState(undefined);
@@ -94,7 +94,7 @@ const ProfilePage = () => {
             <label className="ms-1 form-label">Female</label>
           </div>
           <div className=' d-flex align-items-center flex-column' >
-            <button type="submit" className="btn btn-light border">Update Profile</button>
+            <button type="submit" className={`btn btn-${theme} `}>Update Profile</button>
           </div>
         </form>
       </div>

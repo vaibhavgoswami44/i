@@ -3,10 +3,12 @@ import Modal from 'react-bootstrap/Modal';
 import Button from 'react-bootstrap/Button';
 import userContext from '../../../context/user/UserContext';
 import { Link } from 'react-router-dom';
+import alertContext from '../../../context/alert/AlertContext'
 
 
 const UpdateEmail = () => {
     const { authenticateUser, getLoggedinUserData, updateEmailorPassword } = useContext(userContext)
+    const { theme } = useContext(alertContext)
     const [showHidePassword, setshowHidePassword] = useState('password')
     //verify user
     const [password, setPassword] = useState('')
@@ -77,10 +79,10 @@ const UpdateEmail = () => {
                 show={show}
                 onHide={() => { setShow(false); setNewEmailForm(false); setTitle({ title: "Verify it's you" }); setEmailError(false); setshowHidePassword('password'); }}
             >
-                <Modal.Header closeButton>
+                <Modal.Header closeButton className={`bg-${theme}`}>
                     <Modal.Title>{title.title}</Modal.Title>
                 </Modal.Header>
-                <Modal.Body>
+                <Modal.Body className={`bg-${theme}`} >
                     {newEmailForm ?
                         <form>
                             <label htmlFor="email" className="form-label">Enter New Email</label>
@@ -97,11 +99,11 @@ const UpdateEmail = () => {
                                     Show Password
                                 </label>
                             </div>
-                            <Link to='/forgot-password'> <span>Forgot Your Password?</span></Link>
+                            <Link to='/forgot-password' state={email}> <span>Forgot Your Password?</span></Link>
                         </form>
                     }
                 </Modal.Body>
-                <Modal.Footer>
+                <Modal.Footer className={`bg-${theme}`}>
                     <Button variant="secondary" onClick={() => { setShow(false); setNewEmailForm(false); setTitle({ title: "Verify it's you" }); setEmailError(false); setshowHidePassword('password'); }}>
                         cancel
                     </Button>
@@ -112,10 +114,10 @@ const UpdateEmail = () => {
                 </Modal.Footer>
             </Modal>
 
-            <div>
-                <span className='d-block' >Email</span>
-                <span className='border p-2' >{email}</span>
-                <Button className='mx-3 btn btn-light border' variant="primary" onClick={() => setShow(true)}>
+            <div className='mt-2'>
+                <span className='d-block'>Email</span>
+                <span className=' text-muted me-3' >{email}</span>
+                <Button className={`mt-1 btn btn-${theme} `} variant="primary" onClick={() => setShow(true)}>
                     Change Email
                 </Button>
             </div>

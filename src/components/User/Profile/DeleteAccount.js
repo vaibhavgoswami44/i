@@ -1,12 +1,14 @@
-import React, { useContext, useState } from 'react'
+import React, { useContext, useEffect, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import Modal from 'react-bootstrap/Modal';
 import Button from 'react-bootstrap/Button';
 import userContext from '../../../context/user/UserContext';
 import { Link } from 'react-router-dom';
+import alertContext from '../../../context/alert/AlertContext';
 
 const DeleteAccount = () => {
-  const { authenticateUser, deleteUser, setiNoteBookUser } = useContext(userContext)
+  const { authenticateUser, deleteUser, setiNoteBookUser, getLoggedinUserData } = useContext(userContext)
+  const { theme } = useContext(alertContext)
   const navigate = useNavigate()
   const [password, setPassword] = useState('')
   const [showHidePassword, setshowHidePassword] = useState('password')
@@ -14,6 +16,19 @@ const DeleteAccount = () => {
   const [deleteUserForm, setDeleteUserForm] = useState(false)
   const [title, setTitle] = useState({ title: "Verify it's you" })
   const [show, setShow] = useState(false);
+  const [email, setEmail] = useState(false);
+
+
+  const getdata = async () => {
+    //get current email
+    const a = await getLoggedinUserData();
+    setEmail(a.email)
+  };
+
+  useEffect(() => {
+    getdata()
+    // eslint-disable-next-line
+  }, [])
 
   const verifyPassword = async () => {
     let result = await authenticateUser(password)
@@ -49,10 +64,10 @@ const DeleteAccount = () => {
           setshowHidePassword('password');
         }}
       >
-        <Modal.Header closeButton>
+        <Modal.Header closeButton className={`bg-${theme}`}>
           <Modal.Title>{title.title}</Modal.Title>
         </Modal.Header>
-        <Modal.Body>
+        <Modal.Body className={`bg-${theme}`}>
           {deleteUserForm ?
             <>
               <h2 className="fs-5">Are you sure you want delete your account</h2>
@@ -68,11 +83,11 @@ const DeleteAccount = () => {
                   Show Password
                 </label>
               </div>
-              <Link to='/forgot-password'> <span>Forgot Your Password?</span></Link>
+              <Link to='/forgot-password' state={email}> <span>Forgot Your Password?</span></Link>
             </form>
           }
         </Modal.Body>
-        <Modal.Footer>
+        <Modal.Footer className={`bg-${theme}`}>
           <Button variant="secondary"
             onClick={() => {
               setShow(false);

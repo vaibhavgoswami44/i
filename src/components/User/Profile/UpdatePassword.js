@@ -3,10 +3,12 @@ import Modal from 'react-bootstrap/Modal';
 import Button from 'react-bootstrap/Button';
 import userContext from '../../../context/user/UserContext';
 import { Link } from 'react-router-dom';
+import alertContext from '../../../context/alert/AlertContext';
 
 
 const UpdatePassword = () => {
     const { authenticateUser, getLoggedinUserData, updateEmailorPassword } = useContext(userContext)
+    const { theme } = useContext(alertContext)
     const [showHidePassword, setshowHidePassword] = useState('password')
     //old password
     const [password, setPassword] = useState('')
@@ -20,6 +22,7 @@ const UpdatePassword = () => {
     const [newPasswordForm, setNewPasswordForm] = useState(false)
     //modal title
     const [title, setTitle] = useState({ title: "Verify it's you" })
+    const [email, setEmail] = useState('')
     //show and hide modal
     const [show, setShow] = useState(false);
     //when was password changed
@@ -35,6 +38,7 @@ const UpdatePassword = () => {
         //converting date into readable string
         let date = new Date(a.lastPasswordChangedDate)
         let readableDate = date.toString()
+        setEmail(a.email)
         setLastPasswordChangedDate(readableDate)
     };
 
@@ -97,10 +101,10 @@ const UpdatePassword = () => {
                 show={show}
                 onHide={() => { setShow(false); setNewPasswordForm(false); setTitle({ title: "Verify it's you" }); setshowHidePassword('password'); }}
             >
-                <Modal.Header closeButton>
+                <Modal.Header closeButton className={`bg-${theme}`}>
                     <Modal.Title>{title.title}</Modal.Title>
                 </Modal.Header>
-                <Modal.Body>
+                <Modal.Body className={`bg-${theme}`}>
                     {newPasswordForm ?
                         <form>
                             <label htmlFor="password" className="form-label">Enter Your New Password</label>
@@ -126,11 +130,11 @@ const UpdatePassword = () => {
                                     Show Password
                                 </label>
                             </div>
-                            <Link to='/forgot-password'> <span>Forgot Your Password?</span></Link>
+                            <Link to='/forgot-password' state={email}> <span>Forgot Your Password?</span></Link>
                         </form>
                     }
                 </Modal.Body>
-                <Modal.Footer>
+                <Modal.Footer className={`bg-${theme}`}>
                     <Button variant="secondary" onClick={() => { setShow(false); setNewPasswordForm(false); setTitle({ title: "Verify it's you" }); setshowHidePassword('password');; }}>
                         cancel
                     </Button>
@@ -143,8 +147,8 @@ const UpdatePassword = () => {
 
             <div className='mt-2'>
                 <span className='d-block'>Password</span>
-                <span className=' text-muted' >Last Changed on {lastPasswordChangedDate.slice(0, 25)}</span>
-                <Button className='mx-3 btn btn-light border' variant="primary" onClick={() => setShow(true)}>
+                <span className=' text-muted me-3' >Last changed &nbsp;{lastPasswordChangedDate.slice(3, 15)}</span>
+                <Button className={`mt-1 btn btn-${theme} `} variant="primary" onClick={() => setShow(true)}>
                     Change Password
                 </Button>
             </div>

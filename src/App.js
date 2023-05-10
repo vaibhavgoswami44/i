@@ -3,7 +3,7 @@ import './App.css';
 import Nav from './components/Nav';
 import About from './components/About';
 import Alert from './components/Alert';
-import { useContext } from 'react';
+import { useContext, useEffect } from 'react';
 import Login from './components/logs/Login';
 import SignUp from './components/logs/SignUp';
 import HomePage from './components/HomePage';
@@ -15,40 +15,57 @@ import ResetPassword from './components/ResetPassword';
 import LoadingBar from 'react-top-loading-bar'
 
 function App() {
-  const { alertState, progress, setProgress } = useContext(alertContext)
+  const { alertState, progress, setProgress, theme } = useContext(alertContext)
   const { iNoteBookUser } = useContext(userContext)
+
+  useEffect(() => {
+    if (theme === 'dark') {
+      document.body.style.backgroundColor = 'black'
+      document.body.style.color = 'white'
+    } else {
+      document.body.style.backgroundColor = 'white'
+      document.body.style.color = 'black'
+    }
+  }, [theme])
 
   return (
     <>
-      <LoadingBar
-        color='#f11946'
-        progress={progress}
-        onLoaderFinished={() => setProgress(0)}
-      />
-      <Nav />
-      <div className='my-3' style={{height:'50px'}} >
-        {alertState.status && <Alert key={alertState.msg} msg={alertState.msg} status={alertState.status} />}
-      </div>
-      <div className='container'>
-        <Routes>
-          <Route path='/forgot-password' element={<ResetPassword />} />
-          {iNoteBookUser ?
-            <>
-              <Route path='/' exact element={<UserHome />} />
-              <Route path='/profile' exact element={<ProfilePage />} />
-              <Route path='/*' exact element={<UserHome />} />
-            </>
-            :
-            <>
-              <Route path='/' exact element={<HomePage />} />
-              <Route path='/signup' element={<SignUp />} />
+      <div>
 
-              <Route path='/login' element={<Login />} />
-              <Route path='/*' exact element={<HomePage />} />
-            </>
-          }
-          <Route path='/about' element={<About />} />
-        </Routes>
+        <LoadingBar
+          color='#f11946'
+          progress={progress}
+          onLoaderFinished={() => setProgress(0)}
+        />
+        <div style={{ position: 'sticky', top: '0', zIndex: '1200' }}>
+          <div className={`bg-${theme}`} >
+            <Nav />
+          </div>
+          <div className='mb-3' style={{ height: '50px' }} >
+            {alertState.status && <Alert key={alertState.msg} msg={alertState.msg} status={alertState.status} />}
+          </div>
+        </div>
+        <div className='container'>
+          <Routes>
+            <Route path='/forgot-password' element={<ResetPassword />} />
+            {iNoteBookUser ?
+              <>
+                <Route path='/' exact element={<UserHome />} />
+                <Route path='/profile' exact element={<ProfilePage />} />
+                <Route path='/*' exact element={<UserHome />} />
+              </>
+              :
+              <>
+                <Route path='/' exact element={<HomePage />} />
+                <Route path='/signup' element={<SignUp />} />
+
+                <Route path='/login' element={<Login />} />
+                <Route path='/*' exact element={<HomePage />} />
+              </>
+            }
+            <Route path='/about' element={<About />} />
+          </Routes>
+        </div>
       </div>
     </>
   )

@@ -3,9 +3,25 @@ import userContext from './UserContext'
 import alertContext from "../alert/AlertContext";
 
 const UserState = (props) => {
-    const { updateAlert, setProgress } = useContext(alertContext)
+    const { updateAlert, setProgress, theme, setTheme } = useContext(alertContext)
     const [iNoteBookUser, setiNoteBookUser] = useState(JSON.parse(localStorage.getItem('iNoteBookUserDetails')))
     const host = 'http://192.168.205.145:8080'
+
+    useEffect(() => {
+        if (iNoteBookUser) {
+            setTheme(iNoteBookUser.theme)
+        }
+        else {
+            const prefersDark = window.matchMedia("(prefers-color-scheme: dark)").matches;
+            if (prefersDark) {
+                setTheme('dark')
+            }
+            else {
+                setTheme('light')
+            }
+        }
+        //eslint-disable-next-line
+    }, [])
 
     useEffect(() => {
         if (iNoteBookUser) {
@@ -25,7 +41,7 @@ const UserState = (props) => {
             }
 
             setProgress(30)
-            let bodyContent = JSON.stringify(loginCredentials);
+            let bodyContent = JSON.stringify(loginCredentials, theme);
 
             setProgress(50)
             let response = await fetch(`${host}/api/auth/createuser`, {
@@ -43,8 +59,9 @@ const UserState = (props) => {
             }
             else {
                 updateAlert(data.status, data.msg)
-                setiNoteBookUser(data)
-                localStorage.setItem('iNoteBookUserDetails', JSON.stringify(data))
+                const userDetails = { authToken: data.authToken, profilePicture: data.profilePicture, name: data.name, theme: data.theme }
+                localStorage.setItem('iNoteBookUserDetails', JSON.stringify(userDetails))
+                setiNoteBookUser(userDetails)
             }
             setProgress(100)
             return data
@@ -82,9 +99,9 @@ const UserState = (props) => {
             else {
                 updateAlert(data.status, data.msg)
                 // console.log(data);
-                setiNoteBookUser(data)
                 const userDetails = { authToken: data.authToken, profilePicture: data.profilePicture, name: data.name, theme: data.theme }
                 localStorage.setItem('iNoteBookUserDetails', JSON.stringify(userDetails))
+                setiNoteBookUser(userDetails)
             }
             setProgress(100)
             return data
@@ -110,7 +127,8 @@ const UserState = (props) => {
             setProgress(80)
             let data = await response.json();
             setProgress(90)
-            const userDetails = { authToken: iNoteBookUser.authToken, profilePicture: data.profilePicture, name: data.name, theme: iNoteBookUser.theme }
+            // console.log(data);
+            const userDetails = { authToken: iNoteBookUser.authToken, profilePicture: data.profilePicture, name: data.name, theme: data.theme }
             localStorage.removeItem('iNoteBookUserDetails')
             localStorage.setItem('iNoteBookUserDetails', JSON.stringify(userDetails))
             setiNoteBookUser(userDetails)
@@ -320,8 +338,33 @@ const UserState = (props) => {
         }
     }
 
+    //update theme
+    const updateTheme = async (theme) => {
+        try {
+            let headersList = {
+                "auth-token": iNoteBookUser.authToken,
+                "Content-Type": "application/json"
+            }
+            let bodyContent = JSON.stringify(theme);
+            let response = await fetch(`${host}/api/auth/update-theme`, {
+                method: "PUT",
+                headers: headersList,
+                body: bodyContent
+            });
+            let data = await response.json();
+            // console.log(data);
+            const userDetails = { authToken: iNoteBookUser.authToken, profilePicture: iNoteBookUser.profilePicture, name: iNoteBookUser.name, theme: data.theme }
+            // console.log(userDetails)
+            localStorage.removeItem('iNoteBookUserDetails')
+            localStorage.setItem('iNoteBookUserDetails', JSON.stringify(userDetails))
+            setiNoteBookUser(userDetails)
+        } catch (error) {
+            console.log(error);
+        }
+
+    }
     return (
-        <userContext.Provider value={{ login, signUp, getLoggedinUserData, iNoteBookUser, setiNoteBookUser, updateUserDetails, authenticateUser, updateEmailorPassword, deleteUser, generateOTP, verifyOTP, resetPassword }}>
+        <userContext.Provider value={{ login, signUp, getLoggedinUserData, iNoteBookUser, setiNoteBookUser, updateUserDetails, authenticateUser, updateEmailorPassword, deleteUser, generateOTP, verifyOTP, resetPassword, updateTheme }}>
             {props.children}
         </userContext.Provider>
     )

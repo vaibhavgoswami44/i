@@ -2,12 +2,15 @@ import React, { useContext, useState } from 'react'
 import userContext from '../context/user/UserContext'
 import Modal from 'react-bootstrap/Modal';
 import Button from 'react-bootstrap/Button';
-import { useNavigate } from 'react-router-dom'
+import { useLocation, useNavigate } from 'react-router-dom'
+import alertContext from '../context/alert/AlertContext';
 
 const ResetPassword = () => {
+    const location = useLocation()
     const { generateOTP, verifyOTP, resetPassword, iNoteBookUser } = useContext(userContext)
+    const { theme } = useContext(alertContext)
     const navigate = useNavigate()
-    const [email, setEmail] = useState('')
+    const [email, setEmail] = useState(location.state)
     const [OTP, setOTP] = useState('')
     //if entered OTP is wrong
     const [wrongOTP, setWrongOTP] = useState(false)
@@ -77,7 +80,7 @@ const ResetPassword = () => {
                 setWrongOTP(false)
                 setOTP('');
                 setEmail('')
-                iNoteBookUser ? navigate('/profile') : navigate('/login')
+                iNoteBookUser ? navigate('/profile') : navigate('/login', { state: { email } })
             }
             else {
                 setShowNewPasswordModal(true)
@@ -94,10 +97,10 @@ const ResetPassword = () => {
                 aria-labelledby="contained-modal-title-vcenter"
                 centered show={showOTP} onHide={() => { setShowOTP(false); setOTP(''); setWrongOTP(false); }}
             >
-                <Modal.Header closeButton>
+                <Modal.Header closeButton className={`bg-${theme}`}>
                     <Modal.Title>Verify OTP</Modal.Title>
                 </Modal.Header>
-                <Modal.Body>
+                <Modal.Body className={`bg-${theme}`}>
                     <form>
                         <h4 className='text-center' >Enter Your OTP</h4>
                         <div className="mb-3">
@@ -107,7 +110,7 @@ const ResetPassword = () => {
                         </div>
                     </form>
                 </Modal.Body>
-                <Modal.Footer>
+                <Modal.Footer className={`bg-${theme}`}>
                     <Button variant="secondary" onClick={() => { setShowOTP(false); setOTP(''); setWrongOTP(false); }}>
                         cancel
                     </Button>
@@ -121,10 +124,10 @@ const ResetPassword = () => {
                 aria-labelledby="contained-modal-title-vcenter"
                 centered show={showNewPasswordModal} onHide={() => { setShowNewPasswordModal(false); }}
             >
-                <Modal.Header closeButton>
+                <Modal.Header closeButton className={`bg-${theme}`}>
                     <Modal.Title>Enter New Password</Modal.Title>
                 </Modal.Header>
-                <Modal.Body>
+                <Modal.Body className={`bg-${theme}`}>
                     <form>
                         <label htmlFor="password" className="form-label">Enter Your New Password</label>
                         <input key='newPassword' style={{ borderColor: newPasswordLengthError || matchPasswordCPasswordError ? '#dc3545' : '#ced4da' }} type={showHidePassword} name='password' className="form-control" id="password" onChange={(event) => setNewPassword(event.target.value)} />
@@ -140,7 +143,7 @@ const ResetPassword = () => {
                         </div>
                     </form>
                 </Modal.Body>
-                <Modal.Footer>
+                <Modal.Footer className={`bg-${theme}`}>
                     <Button variant="secondary" onClick={() => { setShowNewPasswordModal(false); }}>
                         cancel
                     </Button>
