@@ -31,11 +31,11 @@ const Alert = () => {
                         </div>
                         <div>
                             <OverlayTrigger placement="bottom" overlay={<Tooltip id={`tooltip-edit-theme`} style={{ marginTop: '-8px', zIndex: '1300' }}>Close</Tooltip>}>
-                                <span style={{cursor:'pointer'}} onClick={dismissAlert}>X</span>
+                                <span style={{ cursor: 'pointer' }} onClick={dismissAlert}>X</span>
                             </OverlayTrigger>
                         </div>
                     </div>
-                    <div className='progress-bar' style={{ height: '1px', backgroundColor: alertState.status === 'success' ? 'green' : 'red' }} ></div>
+                    <div className={`progress-bar border border-${alertState.status}`}></div>
                 </div>
             )}
         </>

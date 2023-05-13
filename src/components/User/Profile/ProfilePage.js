@@ -66,8 +66,8 @@ const ProfilePage = () => {
       <div className='border p-3 m-3'>
         <form className='mt-2' onSubmit={updateProfile}>
           <div className="mb-1 d-flex align-items-center flex-column ">
-            <div style={{ maxHeight: '10vh', maxWidth: '10vw' }}>
-              <img style={{ maxHeight: '8vh', maxWidth: '10vw', borderRadius: '30px' }} src={imageSrc} alt='Profile' />
+            <div>
+              <img className='rounded-circle' style={{ height: '110px', width: '110px'}} src={imageSrc} alt='Profile' />
               <div className='d-flex justify-content-end' >
                 <label htmlFor="profilePicture" className="form-label">
                   <OverlayTrigger placement="bottom" overlay={<Tooltip id={`tooltip-edit`}>Select New Image</Tooltip>}>

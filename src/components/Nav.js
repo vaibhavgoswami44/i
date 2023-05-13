@@ -31,28 +31,33 @@ const Nav = () => {
         <>
             <nav className={`navbar navbar-${theme} navbar-expand-lg shadow`}>
                 <div className="container-fluid ">
-                    <div className='d-flex flex-row'>
-                        <Link className="navbar-brand" to={iNoteBookUser ? `/profile` : '/'}>
-                            {iNoteBookUser ?
-                                <>
-                                    <img style={{ width: '30px',borderRadius:'10px' }} src={iNoteBookUser.profilePicture} alt={iNoteBookUser.name} />
-                                    <span className='mx-1'>{iNoteBookUser.name}</span>
-                                </>
-                                :
-                                <i className="bi bi-journal-bookmark-fill ">
-                                    <span className='mx-1' >iNoteBook</span></i>
-                            }
-                        </Link>
-                        <OverlayTrigger placement="bottom" overlay={<Tooltip id={`tooltip-edit-theme`} style={{marginTop:'-8px', zIndex: '1300' }}>Enable {theme === 'dark' ? 'light' : 'dark'} mode</Tooltip>}>
-                            <div className='mt-2'>
-                                <input type="checkbox" className="checkbox" onChange={changeTheme} id="chk" checked={theme === 'dark'} />
-                                <label className="label" htmlFor="chk">
-                                    <i className="bi bi-moon-stars"></i>
-                                    <i className="bi bi-brightness-high"></i>
-                                    <div className="ball"></div>
-                                </label>
-                            </div>
-                        </OverlayTrigger>
+                    <div className='d-flex flex-row align-items-center'>
+                        <div className='d-flex flex-row align-items-center justify-content-center'>
+                            <Link className="navbar-brand" to={iNoteBookUser ? `/profile` : '/'}>
+                                {iNoteBookUser ?
+                                    <>
+                                        <img src={iNoteBookUser.profilePicture} alt={iNoteBookUser.name} width="32" height="32" class="d-inline-block align-text-top rounded-circle" />
+                                        <span> {iNoteBookUser.name}</span>
+                                    </>
+                                    :
+                                    <i className="bi bi-journal-bookmark-fill ">
+                                        <span className='mx-1' >iNoteBook</span>
+                                    </i>
+                                }
+                            </Link>
+                        </div>
+                        <div>
+                            <OverlayTrigger placement="bottom" overlay={<Tooltip id={`tooltip-edit-theme`} style={{ marginTop: '-8px', zIndex: '1300' }}>Enable {theme === 'dark' ? 'light' : 'dark'} mode</Tooltip>}>
+                                <div>
+                                    <input type="checkbox" className="checkbox" onChange={changeTheme} id="chk" checked={theme === 'dark'} />
+                                    <label className="label" htmlFor="chk">
+                                        <i className="bi bi-moon-stars"></i>
+                                        <i className="bi bi-brightness-high"></i>
+                                        <div className="ball"></div>
+                                    </label>
+                                </div>
+                            </OverlayTrigger>
+                        </div>
                     </div >
                     <button className="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
                         <span className="navbar-toggler-icon"></span>
