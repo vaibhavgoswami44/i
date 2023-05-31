@@ -3,10 +3,8 @@ import alertContext from './AlertContext'
 
 const AlertState = (props) => {
     const [alertState, setAlertState] = useState({ status: null, msg: null })
-    const [progress, setProgress] = useState(0)
     const [theme, setTheme] = useState('')
-
-
+    const [loading, setLoading] = useState(false)
 
     const updateAlert = (status, msg) => {
         if (status === 'Failed') {
@@ -19,7 +17,7 @@ const AlertState = (props) => {
     }
 
     return (
-        <alertContext.Provider value={{ updateAlert, alertState, setAlertState, progress, setProgress, theme, setTheme }}>
+        <alertContext.Provider value={{ updateAlert, alertState, setAlertState, theme, setTheme, setLoading, loading }}>
             {props.children}
         </alertContext.Provider>
     )

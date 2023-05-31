@@ -4,13 +4,14 @@ import Modal from 'react-bootstrap/Modal';
 import Button from 'react-bootstrap/Button';
 import { useLocation, useNavigate } from 'react-router-dom'
 import alertContext from '../context/alert/AlertContext';
+import Loader from './Loader'
 
 const ResetPassword = () => {
     const location = useLocation()
     const { generateOTP, verifyOTP, resetPassword, iNoteBookUser } = useContext(userContext)
-    const { theme } = useContext(alertContext)
+    const { theme, setLoading, loading } = useContext(alertContext)
     const navigate = useNavigate()
-    const [email, setEmail] = useState(location.state)
+    const [email, setEmail] = useState(location.state ? location.state : '')
     const [OTP, setOTP] = useState('')
     //if entered OTP is wrong
     const [wrongOTP, setWrongOTP] = useState(false)
@@ -30,8 +31,10 @@ const ResetPassword = () => {
     const [matchPasswordCPasswordError, setMatchPasswordCPasswordError] = useState(false)
 
     const handleSubmit = async (event) => {
+        setLoading(true)
         event.preventDefault()
         const result = await generateOTP(email)
+        setLoading(false)
         if (result.status === 'success') {
             setShowOTP(true)
         }
@@ -90,7 +93,6 @@ const ResetPassword = () => {
 
     return (
         <>
-
             {/* Modal for OTP verification*/}
             <Modal
                 size="lg"
@@ -115,6 +117,7 @@ const ResetPassword = () => {
                         cancel
                     </Button>
                     <button type="button" onClick={verify} className="btn btn-primary">Verify</button>
+                    <button type="button" onClick={() => { setShowOTP(false); setOTP(''); setWrongOTP(false); }} className="btn btn-primary">Resend OTP</button>
                 </Modal.Footer>
             </Modal>
 
@@ -153,14 +156,18 @@ const ResetPassword = () => {
 
 
             {/* Email Form */}
-            <form onSubmit={handleSubmit}>
-                <h4 className='text-center' >Enter Your Email</h4>
-                <div className="mb-3">
-                    <label htmlFor="email" className="form-label">Email</label>
-                    <input name='email' type="email" className="form-control" id="email" value={email} onChange={(event) => setEmail(event.target.value)} required />
-                </div>
-                <button type="submit" className="btn btn-primary">Send OTP</button>
-            </form>
+            {loading ?
+                <Loader />
+                :
+                <form onSubmit={handleSubmit}>
+                    <h4 className='text-center' >Enter Your Email</h4>
+                    <div className="mb-3">
+                        <label htmlFor="email" className="form-label">Email</label>
+                        <input name='email' type="email" className="form-control" id="email" value={email} onChange={(event) => setEmail(event.target.value)} required />
+                    </div>
+                    <button type="submit" className="btn btn-primary">Send OTP</button>
+                </form>
+            }
         </>
     )
 }

@@ -3,10 +3,9 @@ import userContext from './UserContext'
 import alertContext from "../alert/AlertContext";
 
 const UserState = (props) => {
-    const { updateAlert, setProgress, theme, setTheme } = useContext(alertContext)
+    const { updateAlert, theme, setTheme } = useContext(alertContext)
     const [iNoteBookUser, setiNoteBookUser] = useState(JSON.parse(localStorage.getItem('iNoteBookUserDetails')))
-    const host = 'http://192.168.205.145:8080'
-
+    const host = process.env.REACT_APP_HOST
     useEffect(() => {
         if (iNoteBookUser) {
             setTheme(iNoteBookUser.theme)
@@ -35,25 +34,21 @@ const UserState = (props) => {
     const signUp = async (loginCredentials) => {
         try {
 
-            setProgress(10)
             let headersList = {
                 "Content-Type": "application/json"
             }
 
-            setProgress(30)
-            let bodyContent = JSON.stringify(loginCredentials, theme);
+            let bodyContent = JSON.stringify({ ...loginCredentials, theme });
 
-            setProgress(50)
             let response = await fetch(`${host}/api/auth/createuser`, {
                 method: "POST",
                 body: bodyContent,
                 headers: headersList
             });
 
-            setProgress(70)
             let data = await response.json();
 
-            setProgress(90)   // console.log(data);
+            // console.log(data);
             if (data.status === 'Failed') {
                 updateAlert(data.status, data.msg)
             }
@@ -63,9 +58,10 @@ const UserState = (props) => {
                 localStorage.setItem('iNoteBookUserDetails', JSON.stringify(userDetails))
                 setiNoteBookUser(userDetails)
             }
-            setProgress(100)
+
             return data
         } catch (error) {
+            updateAlert('danger', [`Can't connect to  Server  Please try Again After some time`])
             console.log(error);
         }
     }
@@ -74,24 +70,19 @@ const UserState = (props) => {
     const login = async (loginCredentials) => {
         try {
 
-            setProgress(10)
             let headersList = {
                 "Content-Type": "application/json"
             }
 
-            setProgress(30)
             let bodyContent = JSON.stringify(loginCredentials);
-            setProgress(50)
             let response = await fetch(`${host}/api/auth/login`, {
                 method: "POST",
                 body: bodyContent,
                 headers: headersList
             });
 
-            setProgress(70)
             let data = await response.json();
 
-            setProgress(90)
             // console.log(data);
             if (data.status === 'Failed') {
                 updateAlert(data.status, data.msg)
@@ -103,9 +94,10 @@ const UserState = (props) => {
                 localStorage.setItem('iNoteBookUserDetails', JSON.stringify(userDetails))
                 setiNoteBookUser(userDetails)
             }
-            setProgress(100)
+
             return data
         } catch (error) {
+            updateAlert('danger', [`Can't connect to  Server  Please try Again After some time`])
             console.log(error);
         }
     }
@@ -113,28 +105,25 @@ const UserState = (props) => {
     //Get Logged in user Data 
     const getLoggedinUserData = async () => {
         try {
-            setProgress(20)
             let headersList = {
                 "auth-token": iNoteBookUser.authToken
             }
 
-            setProgress(50)
             let response = await fetch(`${host}/api/auth/getuser`, {
                 method: "POST",
                 headers: headersList
             });
 
-            setProgress(80)
             let data = await response.json();
-            setProgress(90)
             // console.log(data);
             const userDetails = { authToken: iNoteBookUser.authToken, profilePicture: data.profilePicture, name: data.name, theme: data.theme }
             localStorage.removeItem('iNoteBookUserDetails')
             localStorage.setItem('iNoteBookUserDetails', JSON.stringify(userDetails))
             setiNoteBookUser(userDetails)
-            setProgress(100)
+
             return { ...data }
         } catch (error) {
+            updateAlert('danger', [`Can't connect to  Server  Please try Again After some time`])
             console.log(error);
         }
 
@@ -142,7 +131,6 @@ const UserState = (props) => {
 
     //Update User Details
     const updateUserDetails = async (user) => {
-        setProgress(10)
         const formData = new FormData()
         formData.append("profilePicture", user.profilePicture)
         formData.append("birthDate", user.birthDate)
@@ -150,27 +138,24 @@ const UserState = (props) => {
         formData.append("name", user.name)
 
         try {
-            setProgress(30)
             let headersList = {
                 "auth-token": iNoteBookUser.authToken
             }
-            setProgress(50)
             let response = await fetch(`${host}/api/auth/updateUserDetails`, {
                 method: "PUT",
                 headers: headersList,
                 body: formData
             });
-            setProgress(70)
             let data = await response.json();
             // console.log(data);
-            setProgress(90)
             updateAlert(data.status, data.msg)
             const userDetails = { authToken: iNoteBookUser.authToken, profilePicture: data.profilePicture, name: data.name, theme: iNoteBookUser.theme }
             localStorage.removeItem('iNoteBookUserDetails')
             localStorage.setItem('iNoteBookUserDetails', JSON.stringify(userDetails))
             setiNoteBookUser(userDetails)
-            setProgress(100)
+
         } catch (error) {
+            updateAlert('danger', [`Can't connect to  Server  Please try Again After some time`])
             console.log(error);
         }
 
@@ -178,28 +163,25 @@ const UserState = (props) => {
 
     //authenticate user for update email or password or delete account
     const authenticateUser = async (password) => {
-        setProgress(10)
         try {
             let headersList = {
                 "Content-Type": "application/json",
                 'auth-token': iNoteBookUser.authToken
             }
-            setProgress(30)
 
             let bodyContent = JSON.stringify({ password });
-            setProgress(50)
             let response = await fetch(`${host}/api/auth/authenticate`, {
                 method: "POST",
                 body: bodyContent,
                 headers: headersList
             });
 
-            setProgress(70)
             let data = await response.json();
             // console.log(data);
-            setProgress(100)
+
             return data
         } catch (error) {
+            updateAlert('danger', [`Can't connect to  Server  Please try Again After some time`])
             console.log(error);
         }
     }
@@ -207,26 +189,23 @@ const UserState = (props) => {
     //update email or password
     const updateEmailorPassword = async (credentials) => {
         try {
-            setProgress(10)
             let headersList = {
                 "Content-Type": "application/json",
                 'auth-token': iNoteBookUser.authToken
             }
-            setProgress(50)
             let bodyContent = JSON.stringify(credentials);
-            setProgress(70)
             let response = await fetch(`${host}/api/auth/updateEmailorPassword`, {
                 method: "PUT",
                 body: bodyContent,
                 headers: headersList
             });
-            setProgress(90)
             let data = await response.json();
             updateAlert(data.status, data.msg)
             // console.log(data);
-            setProgress(100)
+
             return data
         } catch (error) {
+            updateAlert('danger', [`Can't connect to  Server  Please try Again After some time`])
             console.log(error);
         }
     }
@@ -235,20 +214,18 @@ const UserState = (props) => {
     //Delete uaer
     const deleteUser = async () => {
         try {
-            setProgress(30)
             const response = await fetch(`${host}/api/auth/deleteUser`, {
                 method: "DELETE",
                 headers: {
                     "auth-token": iNoteBookUser.authToken
                 }
             });
-            setProgress(60)
             const data = await response.json()
             // console.log(data);
-            setProgress(90)
             updateAlert(data.status, data.msg)
-            setProgress(100)
+
         } catch (error) {
+            updateAlert('danger', [`Can't connect to  Server  Please try Again After some time`])
             console.log(error);
         }
 
@@ -256,55 +233,47 @@ const UserState = (props) => {
 
     //get OTP for resting password
     const generateOTP = async (email) => {
-        setProgress(10)
         try {
             let headersList = {
                 "Content-Type": "application/json",
             }
-            setProgress(30)
             let bodyContent = JSON.stringify({ email });
-            setProgress(50)
             let response = await fetch(`${host}/api/auth/forgot-password`, {
                 method: "POST",
                 body: bodyContent,
                 headers: headersList
             });
-            setProgress(70)
             let data = await response.json();
-            setProgress(90)
             updateAlert(data.status, data.msg)
             // console.log(data);
-            setProgress(100)
+
             return data
         } catch (error) {
+            updateAlert('danger', [`Can't connect to  Server  Please try Again After some time`])
             console.log(error);
         }
     }
     //verify OTP for resting password
     const verifyOTP = async (otp, email) => {
         try {
-            setProgress(10)
             let headersList = {
                 "Content-Type": "application/json",
             }
 
-            setProgress(50)
             let bodyContent = JSON.stringify({ otp, email });
-            setProgress(60)
             let response = await fetch(`${host}/api/auth/verify-otp`, {
                 method: "POST",
                 body: bodyContent,
                 headers: headersList
             });
 
-            setProgress(80)
             let data = await response.json();
-            setProgress(90)
             updateAlert(data.status, data.msg)
             // console.log(data);
-            setProgress(100)
+
             return data
         } catch (error) {
+            updateAlert('danger', [`Can't connect to  Server  Please try Again After some time`])
             console.log(error);
         }
     }
@@ -312,28 +281,24 @@ const UserState = (props) => {
     //reset password
     const resetPassword = async (email, password) => {
         try {
-            setProgress(10)
             let headersList = {
                 "Content-Type": "application/json",
             }
 
-            setProgress(30)
             let bodyContent = JSON.stringify({ password, email });
-            setProgress()
             let response = await fetch(`${host}/api/auth/reset-password`, {
                 method: "POST",
                 body: bodyContent,
                 headers: headersList
             });
 
-            setProgress(50)
             let data = await response.json();
             updateAlert(data.status, data.msg)
-            setProgress(70)
             // console.log(data);
-            setProgress(100)
+
             return data
         } catch (error) {
+            updateAlert('danger', [`Can't connect to  Server  Please try Again After some time`])
             console.log(error);
         }
     }

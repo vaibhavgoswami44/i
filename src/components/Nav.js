@@ -36,7 +36,7 @@ const Nav = () => {
                             <Link className="navbar-brand" to={iNoteBookUser ? `/profile` : '/'}>
                                 {iNoteBookUser ?
                                     <>
-                                        <img src={iNoteBookUser.profilePicture} alt={iNoteBookUser.name} width="32" height="32" class="d-inline-block align-text-top rounded-circle" />
+                                        <img src={iNoteBookUser.profilePicture} alt={iNoteBookUser.name} width="32" height="32" className="d-inline-block align-text-top rounded-circle" />
                                         <span> {iNoteBookUser.name}</span>
                                     </>
                                     :
@@ -46,7 +46,9 @@ const Nav = () => {
                                 }
                             </Link>
                         </div>
-                        <div>
+                    </div >
+                    <div className='d-flex'>
+                        <div className='mx-3 mt-2'>
                             <OverlayTrigger placement="bottom" overlay={<Tooltip id={`tooltip-edit-theme`} style={{ marginTop: '-8px', zIndex: '1300' }}>Enable {theme === 'dark' ? 'light' : 'dark'} mode</Tooltip>}>
                                 <div>
                                     <input type="checkbox" className="checkbox" onChange={changeTheme} id="chk" checked={theme === 'dark'} />
@@ -58,10 +60,10 @@ const Nav = () => {
                                 </div>
                             </OverlayTrigger>
                         </div>
-                    </div >
-                    <button className="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
-                        <span className="navbar-toggler-icon"></span>
-                    </button>
+                        <button className="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+                            <span className="navbar-toggler-icon"></span>
+                        </button>
+                    </div>
                     <div className="collapse navbar-collapse" style={{ flexGrow: '0' }} id="navbarSupportedContent">
                         <ul className="navbar-nav me-auto mb-2 mb-lg-0"  >
                             <li className="nav-item ">
@@ -76,7 +78,7 @@ const Nav = () => {
                         </ul>
                         {iNoteBookUser ? <button onClick={logout} className="btn btn-primary mx-1"  >Logout</button> : ''}
                     </div>
-                </div >
+                </div>
             </nav >
         </>
     )

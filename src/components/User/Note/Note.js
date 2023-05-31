@@ -5,10 +5,11 @@ import AddNote from './AddNote'
 import Modal from 'react-bootstrap/Modal';
 import Button from 'react-bootstrap/Button';
 import alertContext from '../../../context/alert/AlertContext';
+import Loader from '../../Loader'
 
 const Note = () => {
     const { notes, updateTheNote } = useContext(noteContext)
-    const { theme } = useContext(alertContext)
+    const { theme, loading } = useContext(alertContext)
     const [updateNoteValue, setUpdateNoteValue] = useState({ title: " ", description: " ", tag: " ", _id: '' })
     const [titleError, setTitleError] = useState(false)
     const [tagError, setTagError] = useState(false)
@@ -101,11 +102,12 @@ const Note = () => {
             </Modal>
 
 
-            <div className='d-flex flex-wrap mb-5'  >
-                {notes.map((item) => {
-                    return <NoteItem key={item._id} updateNote={updateNote} note={item} />
-                })}
-            </div>
+            {loading ? <Loader /> : <div className='d-flex flex-wrap mb-5'  >
+                {notes.length === 0 ? 'No Notes To Display' :
+                    notes.map((item) => {
+                        return <NoteItem key={item._id} updateNote={updateNote} note={item} />
+                    })}
+            </div>}
         </>
     )
 }

@@ -12,10 +12,10 @@ import UserHome from './components/User/UserHome';
 import alertContext from './context/alert/AlertContext';
 import userContext from './context/user/UserContext';
 import ResetPassword from './components/ResetPassword';
-import LoadingBar from 'react-top-loading-bar'
+import ErrorPage from './components/ErrorPage';
 
 function App() {
-  const { alertState, progress, setProgress, theme } = useContext(alertContext)
+  const { alertState, theme } = useContext(alertContext)
   const { iNoteBookUser } = useContext(userContext)
 
   useEffect(() => {
@@ -31,12 +31,6 @@ function App() {
   return (
     <>
       <div>
-
-        <LoadingBar
-          color='#f11946'
-          progress={progress}
-          onLoaderFinished={() => setProgress(0)}
-        />
         <div style={{ position: 'sticky', top: '0', zIndex: '1200' }}>
           <div className={`bg-${theme}`} >
             <Nav />
@@ -52,7 +46,7 @@ function App() {
               <>
                 <Route path='/' exact element={<UserHome />} />
                 <Route path='/profile' exact element={<ProfilePage />} />
-                <Route path='/*' exact element={<UserHome />} />
+                <Route path='/*' exact element={<ErrorPage />} />
               </>
               :
               <>
@@ -60,7 +54,7 @@ function App() {
                 <Route path='/signup' element={<SignUp />} />
 
                 <Route path='/login' element={<Login />} />
-                <Route path='/*' exact element={<HomePage />} />
+                <Route path='/*' exact element={<ErrorPage />} />
               </>
             }
             <Route path='/about' element={<About />} />
