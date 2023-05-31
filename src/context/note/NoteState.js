@@ -7,7 +7,7 @@ const NoteState = (props) => {
     const [notes, setNotes] = useState([])
     const { iNoteBookUser } = useContext(userContext)
     const { updateAlert, setLoading } = useContext(alertContext)
-    const host =  process.env.REACT_APP_HOST
+    const host = process.env.REACT_APP_HOST
     useEffect(() => {
         if (iNoteBookUser) {
             featchNotes()
@@ -73,9 +73,9 @@ const NoteState = (props) => {
 
             let data = await response.json();
 
-            // console.log(data);
+            // console.log(data.createnote);
             updateAlert(data.status, data.msg)
-            setNotes([...notes, note])
+            setNotes([...notes, data.createnote])
 
         } catch (error) {
             updateAlert('danger', [`Can't connect to  Server  Please try Again After some time`])
