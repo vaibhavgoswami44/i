@@ -3,13 +3,13 @@ import userContext from '../context/user/UserContext'
 import Modal from 'react-bootstrap/Modal';
 import Button from 'react-bootstrap/Button';
 import { useLocation, useNavigate } from 'react-router-dom'
-import alertContext from '../context/alert/AlertContext';
 import Loader from './Loader'
+import generalContext from '../context/general/generalContext';
 
 const ResetPassword = () => {
     const location = useLocation()
     const { generateOTP, verifyOTP, resetPassword, iNoteBookUser } = useContext(userContext)
-    const { theme, setLoading, loading } = useContext(alertContext)
+    const { theme } = useContext(generalContext)
     const navigate = useNavigate()
     const [email, setEmail] = useState(location.state ? location.state : '')
     const [OTP, setOTP] = useState('')
@@ -30,11 +30,16 @@ const ResetPassword = () => {
     //check new password and new confirm password is same or note
     const [matchPasswordCPasswordError, setMatchPasswordCPasswordError] = useState(false)
 
+
+    const [otpVerifyLoading, setOTPVerifyLoading] = useState(false);
+    const [generatingOTPLoading, setgeneratingOTPLoading] = useState(false);
+    const [resetPasswordLoading, setresetPasswordLoading] = useState(false);
+
     const handleSubmit = async (event) => {
-        setLoading(true)
+        setgeneratingOTPLoading(true)
         event.preventDefault()
         const result = await generateOTP(email)
-        setLoading(false)
+        setgeneratingOTPLoading(false)
         if (result.status === 'success') {
             setShowOTP(true)
         }
@@ -42,15 +47,18 @@ const ResetPassword = () => {
 
     //verify OTP
     const verify = async (event) => {
+        setOTPVerifyLoading(true)
         event.preventDefault()
         const result = await verifyOTP(OTP, email)
         if (result.status === 'success') {
+            setOTPVerifyLoading(false)
             setShowNewPasswordModal(true)
             setWrongOTP(false)
             setShowOTP(false);
             setOTP('');
         }
         else {
+            setOTPVerifyLoading(false)
             setWrongOTP(true)
         }
     }
@@ -74,6 +82,7 @@ const ResetPassword = () => {
 
     //Reset Password
     const SetNewPassword = async () => {
+        setresetPasswordLoading(true)
         handleNewPasswordLength()
         matchNewPassword()
         if (newPassword.length >= 8 && newPassword === newCPassword) {
@@ -83,10 +92,12 @@ const ResetPassword = () => {
                 setWrongOTP(false)
                 setOTP('');
                 setEmail('')
+                setresetPasswordLoading(false)
                 iNoteBookUser ? navigate('/profile') : navigate('/login', { state: { email } })
             }
             else {
                 setShowNewPasswordModal(true)
+                setresetPasswordLoading(false)
             }
         }
     }
@@ -103,21 +114,25 @@ const ResetPassword = () => {
                     <Modal.Title>Verify OTP</Modal.Title>
                 </Modal.Header>
                 <Modal.Body className={`bg-${theme}`}>
-                    <form>
-                        <h4 className='text-center' >Enter Your OTP</h4>
-                        <div className="mb-3">
-                            <label htmlFor="otp" className="form-label">OTP</label>
-                            <input name='otp' type="text" className="form-control" style={{ borderColor: wrongOTP ? '#dc3545' : '#ced4da' }} id="otp" value={OTP} onChange={(event) => setOTP(event.target.value)} required />
-                            <div style={{ height: '20px', color: '#dc3545' }} >{wrongOTP ? 'Invalid OTP or OTP has been expired please regenerate OTP or try Again ' : ''}</div>
-                        </div>
-                    </form>
+                    {otpVerifyLoading ?
+                        <Loader title='Verifying OTP' color='green' />
+                        :
+                        <form>
+                            <h4 className='text-center' >Enter Your OTP</h4>
+                            <div className="mb-3">
+                                <label htmlFor="otp" className="form-label">OTP</label>
+                                <input name='otp' type="text" className="form-control" style={{ borderColor: wrongOTP ? '#dc3545' : '#ced4da' }} id="otp" value={OTP} onChange={(event) => setOTP(event.target.value)} required />
+                                <div style={{ height: '20px', color: '#dc3545' }} >{wrongOTP ? 'Invalid OTP or OTP has been expired please regenerate OTP or try Again ' : ''}</div>
+                            </div>
+                        </form>
+                    }
                 </Modal.Body>
                 <Modal.Footer className={`bg-${theme}`}>
                     <Button variant="secondary" onClick={() => { setShowOTP(false); setOTP(''); setWrongOTP(false); }}>
                         cancel
                     </Button>
-                    <button type="button" onClick={verify} className="btn btn-primary">Verify</button>
                     <button type="button" onClick={() => { setShowOTP(false); setOTP(''); setWrongOTP(false); }} className="btn btn-primary">Resend OTP</button>
+                    <button type="button" onClick={verify} className="btn btn-primary">Verify</button>
                 </Modal.Footer>
             </Modal>
 
@@ -131,42 +146,49 @@ const ResetPassword = () => {
                     <Modal.Title>Enter New Password</Modal.Title>
                 </Modal.Header>
                 <Modal.Body className={`bg-${theme}`}>
-                    <form>
-                        <label htmlFor="password" className="form-label">Enter Your New Password</label>
-                        <input key='newPassword' style={{ borderColor: newPasswordLengthError || matchPasswordCPasswordError ? '#dc3545' : '#ced4da' }} type={showHidePassword} name='password' className="form-control" id="password" onChange={(event) => setNewPassword(event.target.value)} />
-                        <div style={{ height: '30px', color: '#dc3545' }} >{newPasswordLengthError ? 'Password length must be at least 8 characters.' : ''}</div>
-                        <label htmlFor="cpassword" className="form-label">Confirm Your New Password</label>
-                        <input type={showHidePassword} name='cpassword' className="form-control" style={{ borderColor: matchPasswordCPasswordError ? '#dc3545' : '#ced4da' }} id="cpassword" onChange={(event) => setNewCPassword(event.target.value)} />
-                        <div style={{ height: '30px', color: '#dc3545' }} >{matchPasswordCPasswordError ? 'Password Not Match' : ''}</div>
-                        <div className="form-check">
-                            <input onClick={() => showHidePassword === 'password' ? setshowHidePassword('text') : setshowHidePassword('password')} className="form-check-input" type="checkbox" value="" id="showPassword" />
-                            <label className="form-check-label" htmlFor="showPassword">
-                                Show Password
-                            </label>
-                        </div>
-                    </form>
+                    {resetPasswordLoading ?
+                        <Loader title='Resting Password' color='green' />
+                        :
+                        <form>
+                            <label htmlFor="password" className="form-label">Enter Your New Password</label>
+                            <input key='newPassword' style={{ borderColor: newPasswordLengthError || matchPasswordCPasswordError ? '#dc3545' : '#ced4da' }} type={showHidePassword} name='password' className="form-control" id="password" onChange={(event) => setNewPassword(event.target.value)} />
+                            <div style={{ height: '30px', color: '#dc3545' }} >{newPasswordLengthError ? 'Password length must be at least 8 characters.' : ''}</div>
+                            <label htmlFor="cpassword" className="form-label">Confirm Your New Password</label>
+                            <input type={showHidePassword} name='cpassword' className="form-control" style={{ borderColor: matchPasswordCPasswordError ? '#dc3545' : '#ced4da' }} id="cpassword" onChange={(event) => setNewCPassword(event.target.value)} />
+                            <div style={{ height: '30px', color: '#dc3545' }} >{matchPasswordCPasswordError ? 'Password Not Match' : ''}</div>
+                            <div className="form-check">
+                                <input onClick={() => showHidePassword === 'password' ? setshowHidePassword('text') : setshowHidePassword('password')} className="form-check-input" type="checkbox" value="" id="showPassword" />
+                                <label className="form-check-label" htmlFor="showPassword">
+                                    Show Password
+                                </label>
+                            </div>
+                        </form>
+                    }
                 </Modal.Body>
                 <Modal.Footer className={`bg-${theme}`}>
                     <Button variant="secondary" onClick={() => { setShowNewPasswordModal(false); }}>
                         cancel
                     </Button>
-                    <button type="button" onClick={SetNewPassword} className="btn btn-primary">Verify</button>
+                    <button type="button" onClick={SetNewPassword} className="btn btn-primary">Reset Password</button>
                 </Modal.Footer>
             </Modal>
 
 
             {/* Email Form */}
-            {loading ?
-                <Loader />
+            {generatingOTPLoading ?
+                <Loader title='Sending OTP' color='green' />
                 :
-                <form onSubmit={handleSubmit}>
-                    <h4 className='text-center' >Enter Your Email</h4>
-                    <div className="mb-3">
-                        <label htmlFor="email" className="form-label">Email</label>
-                        <input name='email' type="email" className="form-control" id="email" value={email} onChange={(event) => setEmail(event.target.value)} required />
-                    </div>
-                    <button type="submit" className="btn btn-primary">Send OTP</button>
-                </form>
+                <>
+                    <form onSubmit={handleSubmit}>
+                        <h4 className='text-center' >Enter Your Email</h4>
+                        <div className="mb-3">
+                            <label htmlFor="email" className="form-label">Email</label>
+                            <input name='email' type="email" className="form-control" id="email" value={email} onChange={(event) => setEmail(event.target.value)} required />
+                        </div>
+                        <button type="submit" className="btn btn-primary">Send OTP</button>
+                    </form>
+                    <p className='text-danger mt-2'>OTP is valid for ten Minutes</p>
+                </>
             }
         </>
     )

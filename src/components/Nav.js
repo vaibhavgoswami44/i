@@ -3,11 +3,13 @@ import { Link, useLocation, useNavigate } from 'react-router-dom'
 import { OverlayTrigger, Tooltip } from 'react-bootstrap';
 import '../App.css'
 import userContext from '../context/user/UserContext'
-import alertContext from '../context/alert/AlertContext'
+import generalContext from '../context/general/generalContext';
+import noteContext from '../context/note/NoteContext';
 
 const Nav = () => {
     const { iNoteBookUser, setiNoteBookUser, updateTheme } = useContext(userContext)
-    const { theme, setTheme } = useContext(alertContext)
+    const { theme, setTheme } = useContext(generalContext)
+    const {setNotes} = useContext(noteContext)
 
     const active = useLocation()
     const navigate = useNavigate()
@@ -23,6 +25,7 @@ const Nav = () => {
     }
     const logout = () => {
         setiNoteBookUser(null)
+        setNotes([])
         hideNav();
         localStorage.removeItem('iNoteBookUserDetails')
         navigate('/')

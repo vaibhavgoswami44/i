@@ -3,12 +3,13 @@ import Modal from 'react-bootstrap/Modal';
 import Button from 'react-bootstrap/Button';
 import userContext from '../../../context/user/UserContext';
 import { Link } from 'react-router-dom';
-import alertContext from '../../../context/alert/AlertContext';
+import generalContext from '../../../context/general/generalContext';
+import Loader from '../../Loader';
 
 
 const UpdatePassword = () => {
     const { authenticateUser, getLoggedinUserData, updateEmailorPassword } = useContext(userContext)
-    const { theme } = useContext(alertContext)
+    const { theme } = useContext(generalContext)
     const [showHidePassword, setshowHidePassword] = useState('password')
     //old password
     const [password, setPassword] = useState('')
@@ -32,6 +33,11 @@ const UpdatePassword = () => {
     //check new password and new confirm password is same or note
     const [matchPasswordCPasswordError, setMatchPasswordCPasswordError] = useState(false)
 
+
+    const [loader, setLoader] = useState()
+    const [loaderTitle, setLoaderTitle] = useState()
+    const [loaderTextColor, setLoaderTextColor] = useState()
+
     const getdata = async () => {
         //get when was password changed
         const a = await getLoggedinUserData();
@@ -49,16 +55,25 @@ const UpdatePassword = () => {
 
 
     const verifyPassword = async () => {
+        setLoader(true)
+        setLoaderTitle('Verifying Password')
+        setLoaderTextColor('green')
         let result = await authenticateUser(password)
 
         if (result.status === 'Failed') {
             setWrongPassword(true)
             setNewPasswordForm(false)
+            setLoader(false)
+            setLoaderTitle('')
+            setLoaderTextColor('')
         } else {
             setTitle({ title: "Enter New Password" })
             setWrongPassword(false)
             setNewPasswordForm(true)
             setshowHidePassword('password')
+            setLoader(false)
+            setLoaderTitle('')
+            setLoaderTextColor('')
         }
     }
 
@@ -78,32 +93,43 @@ const UpdatePassword = () => {
             setMatchPasswordCPasswordError(true)
         }
     }
-    const updateNewPassword = () => {
-        handleNewPasswordLength()
-        matchNewPassword()
-        if (newPassword.length >= 8 && newPassword === newCPassword) {
-            updateEmailorPassword({ password: newPassword })
-            setLastPasswordChangedDate(Date())
-            setNewPasswordForm(false)
-            setTitle({ title: "Verify it's you" })
-            setShow(false)
-            setshowHidePassword('password')
-        }
+    const updateNewPassword = async () => {
+    handleNewPasswordLength()
+    matchNewPassword()
+    if (newPassword.length >= 8 && newPassword === newCPassword) {
+        setLoader(true)
+        setLoaderTitle('Updating Password')
+        setLoaderTextColor('green')
+        await updateEmailorPassword({ password: newPassword })
+        setLoader(false)
+        setLoaderTitle('')
+        setLoaderTextColor('')
+        setLastPasswordChangedDate(Date())
+        setNewPasswordForm(false)
+        setTitle({ title: "Verify it's you" })
+        setShow(false)
+        setshowHidePassword('password')
     }
+}
 
-    return (
-        <>
-            {/* Modal */}
-            <Modal
-                size="lg"
-                aria-labelledby="contained-modal-title-vcenter"
-                centered
-                show={show}
-                onHide={() => { setShow(false); setNewPasswordForm(false); setTitle({ title: "Verify it's you" }); setshowHidePassword('password'); }}
-            >
-                <Modal.Header closeButton className={`bg-${theme}`}>
-                    <Modal.Title>{title.title}</Modal.Title>
-                </Modal.Header>
+return (
+    <>
+        {/* Modal */}
+        <Modal
+            size="lg"
+            aria-labelledby="contained-modal-title-vcenter"
+            centered
+            show={show}
+            onHide={() => { setShow(false); setNewPasswordForm(false); setTitle({ title: "Verify it's you" }); setshowHidePassword('password'); }}
+        >
+            <Modal.Header closeButton className={`bg-${theme}`}>
+                <Modal.Title>{title.title}</Modal.Title>
+            </Modal.Header>
+            {loader ?
+                <Modal.Body className={`bg-${theme}`}>
+                    <Loader title={loaderTitle} color={loaderTextColor} />
+                </Modal.Body>
+                :
                 <Modal.Body className={`bg-${theme}`}>
                     {newPasswordForm ?
                         <form>
@@ -134,26 +160,27 @@ const UpdatePassword = () => {
                         </form>
                     }
                 </Modal.Body>
-                <Modal.Footer className={`bg-${theme}`}>
-                    <Button variant="secondary" onClick={() => { setShow(false); setNewPasswordForm(false); setTitle({ title: "Verify it's you" }); setshowHidePassword('password');; }}>
-                        cancel
-                    </Button>
-                    {newPasswordForm ?
-                        <button onClick={updateNewPassword} type="button" className="btn btn-primary">Change Password</button>
-                        :
-                        <button onClick={verifyPassword} type="button" className="btn btn-primary">Verify</button>}
-                </Modal.Footer>
-            </Modal>
-
-            <div className='mt-2'>
-                <span className='d-block'>Password</span>
-                <span className=' text-muted me-3' >Last changed &nbsp;{lastPasswordChangedDate.slice(3, 15)}</span>
-                <Button className={`mt-1 btn btn-${theme} `} variant="primary" onClick={() => setShow(true)}>
-                    Change Password
+            }
+            <Modal.Footer className={`bg-${theme}`}>
+                <Button variant="secondary" onClick={() => { setShow(false); setNewPasswordForm(false); setTitle({ title: "Verify it's you" }); setshowHidePassword('password');; }}>
+                    cancel
                 </Button>
-            </div>
-        </>
-    )
+                {newPasswordForm ?
+                    <button onClick={updateNewPassword} type="button" className="btn btn-primary">Change Password</button>
+                    :
+                    <button onClick={verifyPassword} type="button" className="btn btn-primary">Verify</button>}
+            </Modal.Footer>
+        </Modal>
+
+        <div className='mt-2'>
+            <span className='d-block'>Password</span>
+            <span className=' text-muted me-3' >Last changed &nbsp;{lastPasswordChangedDate.slice(3, 15)}</span>
+            <Button className={`mt-1 btn btn-${theme} `} variant="primary" onClick={() => setShow(true)}>
+                Change Password
+            </Button>
+        </div>
+    </>
+)
 }
 
 export default UpdatePassword

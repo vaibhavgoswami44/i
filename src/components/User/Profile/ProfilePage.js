@@ -6,10 +6,12 @@ import userContext from '../../../context/user/UserContext';
 import alertContext from '../../../context/alert/AlertContext';
 import { OverlayTrigger, Tooltip } from 'react-bootstrap';
 import Loader from '../../Loader';
+import generalContext from '../../../context/general/generalContext';
 
 const ProfilePage = () => {
   const { getLoggedinUserData, updateUserDetails } = useContext(userContext);
-  const { updateAlert, theme, loading, setLoading } = useContext(alertContext)
+  const { updateAlert } = useContext(alertContext)
+  const { theme, loading, setLoading } = useContext(generalContext)
   //user details
   const [user, setUser] = useState({ profilePicture: '', birthDate: '', gender: '', name: '' });
   const [imageSrc, setImageSrc] = useState(undefined);
@@ -25,7 +27,6 @@ const ProfilePage = () => {
 
   useEffect(() => {
     getdata();
-    console.log('hello');
     //eslint-disable-next-line
   }, []);
 
@@ -65,7 +66,7 @@ const ProfilePage = () => {
 
   return (
     <>{loading ?
-      <Loader />
+      <Loader title='Getting Your Details' color='green' />
       :
       <>
         <h4 className='mb-0' >Profile</h4>

@@ -4,12 +4,12 @@ import NoteItem from './NoteItem'
 import AddNote from './AddNote'
 import Modal from 'react-bootstrap/Modal';
 import Button from 'react-bootstrap/Button';
-import alertContext from '../../../context/alert/AlertContext';
+import generalContext from '../../../context/general/generalContext';
 import Loader from '../../Loader'
 
 const Note = () => {
     const { notes, updateTheNote } = useContext(noteContext)
-    const { theme, loading } = useContext(alertContext)
+    const { theme, loading } = useContext(generalContext)
     const [updateNoteValue, setUpdateNoteValue] = useState({ title: " ", description: " ", tag: " ", _id: '' })
     const [titleError, setTitleError] = useState(false)
     const [tagError, setTagError] = useState(false)
@@ -21,11 +21,6 @@ const Note = () => {
         const { title, description, tag, _id } = note
         setUpdateNoteValue({ title, description, tag, _id })
     }
-
-    const handleChange = (e) => {
-        setUpdateNoteValue({ ...updateNoteValue, [e.target.name]: e.target.value })
-    }
-
 
     const title = () => {
         if (updateNoteValue.title.length < 3) {
@@ -44,19 +39,24 @@ const Note = () => {
         }
     }
     const description = () => {
-        if (updateNoteValue.description.length < 3) {
+        if (updateNoteValue.description.length < 5) {
             setDescriptionError(true)
         }
         else {
             setDescriptionError(false)
         }
     }
-
+    const handleChange = (e) => {
+        if (e.target.name === 'title') { title() }
+        if (e.target.name === 'tag') { tag() }
+        if (e.target.name === 'description') { description() }
+        setUpdateNoteValue({ ...updateNoteValue, [e.target.name]: e.target.value })
+    }
     const submitData = () => {
         title()
         tag()
         description()
-        if (!((updateNoteValue.title.length < 3) || (updateNoteValue.tag.length < 3) || (updateNoteValue.description.length < 3))) {
+        if (!((updateNoteValue.title.length < 3) || (updateNoteValue.tag.length < 3) || (updateNoteValue.description.length < 5))) {
             updateTheNote(updateNoteValue)
             setShow(false);
         }
@@ -97,12 +97,12 @@ const Note = () => {
                     <Button variant="secondary" onClick={() => { setShow(false); setDescriptionError(false); setTagError(false); setTitleError(false) }}>
                         Close
                     </Button>
-                    <button type="button" onClick={submitData} className="btn btn-primary">Update Note</button>
+                    <button type="button" onClick={submitData} className="btn btn-primary" disabled={((updateNoteValue.title.length < 3) || (updateNoteValue.tag.length < 3) || (updateNoteValue.description.length < 5))}>Update Note</button>
                 </Modal.Footer>
             </Modal>
 
 
-            {loading ? <Loader /> : <div className='d-flex flex-wrap mb-5'  >
+            {loading ? <Loader title='featching Notes' color='green' /> : <div className='d-flex flex-wrap mb-5'  >
                 {notes.length === 0 ? 'No Notes To Display' :
                     notes.map((item) => {
                         return <NoteItem key={item._id} updateNote={updateNote} note={item} />

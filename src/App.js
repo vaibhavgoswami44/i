@@ -13,9 +13,12 @@ import alertContext from './context/alert/AlertContext';
 import userContext from './context/user/UserContext';
 import ResetPassword from './components/ResetPassword';
 import ErrorPage from './components/ErrorPage';
+import generalContext from './context/general/generalContext';
+import LoadingBar from 'react-top-loading-bar'
 
 function App() {
-  const { alertState, theme } = useContext(alertContext)
+  const { alertState } = useContext(alertContext)
+  const { theme, progress, setProgress } = useContext(generalContext)
   const { iNoteBookUser } = useContext(userContext)
 
   useEffect(() => {
@@ -30,6 +33,11 @@ function App() {
 
   return (
     <>
+      <LoadingBar
+        color='#f11946'
+        progress={progress}
+        onLoaderFinished={() => setProgress(0)}
+      />
       <div>
         <div style={{ position: 'sticky', top: '0', zIndex: '1200' }}>
           <div className={`bg-${theme}`} >
