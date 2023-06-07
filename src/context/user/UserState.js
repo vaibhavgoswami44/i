@@ -169,7 +169,7 @@ const UserState = (props) => {
             setProgress(80)
             let data = await response.json();
             setProgress(90)
-            console.log(data);
+            // console.log(data);
             updateAlert(data.status, data.msg)
             const userDetails = { authToken: iNoteBookUser.authToken, profilePicture: data.profilePicture, name: data.name, theme: iNoteBookUser.theme }
             localStorage.removeItem('iNoteBookUserDetails')

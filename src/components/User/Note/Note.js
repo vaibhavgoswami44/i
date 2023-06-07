@@ -13,6 +13,7 @@ const Note = () => {
     const [updateNoteValue, setUpdateNoteValue] = useState({ title: " ", description: " ", tag: " ", _id: '' })
     const [titleError, setTitleError] = useState(false)
     const [tagError, setTagError] = useState(false)
+    const [updateNoteLoader, setupdateNoteLoader] = useState(false)
     const [show, setShow] = useState(false)
     const [descriptionError, setDescriptionError] = useState(false)
 
@@ -52,12 +53,15 @@ const Note = () => {
         if (e.target.name === 'description') { description() }
         setUpdateNoteValue({ ...updateNoteValue, [e.target.name]: e.target.value })
     }
-    const submitData = () => {
+    const submitData = async (event) => {
+        event.preventDefault()
         title()
         tag()
         description()
         if (!((updateNoteValue.title.length < 3) || (updateNoteValue.tag.length < 3) || (updateNoteValue.description.length < 5))) {
-            updateTheNote(updateNoteValue)
+            setupdateNoteLoader(true)
+            await updateTheNote(updateNoteValue)
+            setupdateNoteLoader(false)
             setShow(false);
         }
     }
@@ -67,33 +71,40 @@ const Note = () => {
             <AddNote />
 
             <Modal
+                data-bs-theme={theme}
                 size="lg"
                 aria-labelledby="contained-modal-title-vcenter"
                 centered show={show} onHide={() => { setShow(false); setDescriptionError(false); setTagError(false); setTitleError(false) }}
             >
-                <Modal.Header closeButton className={`bg-${theme}`}>
+                <Modal.Header closeButton className={` bg-body-tertiary text-${theme === 'dark' ? 'light' : 'dark'}-emphasis`}>
                     <Modal.Title>Update Note</Modal.Title>
                 </Modal.Header >
-                <Modal.Body className={`bg-${theme}`}>
-                    <form onSubmit={submitData}>
-                        <div className="mb-3">
-                            <label htmlFor="title" className="form-label">Title</label>
-                            <input name='title' type="text" className="form-control" style={{ borderColor: titleError ? '#dc3545' : '#ced4da' }} id="title" value={updateNoteValue.title} onChange={handleChange} />
-                            <div style={{ height: '30px', color: '#dc3545' }} >{titleError ? 'Title length must be at least 3 characters.' : ''}</div>
-                        </div>
-                        <div className="mb-3">
-                            <label htmlFor="tag" className="form-label">Tag</label>
-                            <input type="text" name='tag' className="form-control" style={{ borderColor: tagError ? '#dc3545' : '#ced4da' }} id="tag" value={updateNoteValue.tag} onChange={handleChange} />
-                            <div style={{ height: '30px', color: '#dc3545' }} >{tagError ? 'Tag length must be at least 3 characters.' : ''}</div>
-                        </div>
-                        <div className="mb-3">
-                            <label htmlFor="description" className="form-label">Description</label>
-                            <input type='text' name='description' className="form-control" style={{ borderColor: descriptionError ? '#dc3545' : '#ced4da' }} id="description" value={updateNoteValue.description} onChange={handleChange} />
-                            <div style={{ height: '30px', color: '#dc3545' }} >{descriptionError ? "Description length must be at least 5 characters." : ''}</div>
-                        </div>
-                    </form>
-                </Modal.Body>
-                <Modal.Footer className={`bg-${theme}`}>
+                {updateNoteLoader ?
+                    <Modal.Body className={` bg-body-tertiary text-${theme === 'dark' ? 'light' : 'dark'}-emphasis`}>
+                        <Loader title='Updating Note' color='green' />
+                    </Modal.Body>
+                    :
+                    <Modal.Body className={` bg-body-tertiary text-${theme === 'dark' ? 'light' : 'dark'}-emphasis`}>
+                        <form onSubmit={submitData}>
+                            <div className="mb-3">
+                                <label htmlFor="title" className="form-label">Title</label>
+                                <input name='title' type="text" className="form-control" style={{ borderColor: titleError ? '#dc3545' : '#ced4da' }} id="title" value={updateNoteValue.title} onChange={handleChange} />
+                                <div style={{ height: '30px', color: '#dc3545' }} >{titleError ? 'Title length must be at least 3 characters.' : ''}</div>
+                            </div>
+                            <div className="mb-3">
+                                <label htmlFor="tag" className="form-label">Tag</label>
+                                <input type="text" name='tag' className="form-control" style={{ borderColor: tagError ? '#dc3545' : '#ced4da' }} id="tag" value={updateNoteValue.tag} onChange={handleChange} />
+                                <div style={{ height: '30px', color: '#dc3545' }} >{tagError ? 'Tag length must be at least 3 characters.' : ''}</div>
+                            </div>
+                            <div className="mb-3">
+                                <label htmlFor="description" className="form-label">Description</label>
+                                <input type='text' name='description' className="form-control" style={{ borderColor: descriptionError ? '#dc3545' : '#ced4da' }} id="description" value={updateNoteValue.description} onChange={handleChange} />
+                                <div style={{ height: '30px', color: '#dc3545' }} >{descriptionError ? "Description length must be at least 5 characters." : ''}</div>
+                            </div>
+                        </form>
+                    </Modal.Body>
+                }
+                <Modal.Footer className={` bg-body-tertiary text-${theme === 'dark' ? 'light' : 'dark'}-emphasis`}>
                     <Button variant="secondary" onClick={() => { setShow(false); setDescriptionError(false); setTagError(false); setTitleError(false) }}>
                         Close
                     </Button>

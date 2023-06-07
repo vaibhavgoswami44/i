@@ -81,7 +81,8 @@ const ResetPassword = () => {
     }
 
     //Reset Password
-    const SetNewPassword = async () => {
+    const SetNewPassword = async (event) => {
+        event.preventDefault()
         setresetPasswordLoading(true)
         handleNewPasswordLength()
         matchNewPassword()
@@ -106,18 +107,24 @@ const ResetPassword = () => {
         <>
             {/* Modal for OTP verification*/}
             <Modal
+                data-bs-theme={theme}
                 size="lg"
                 aria-labelledby="contained-modal-title-vcenter"
-                centered show={showOTP} onHide={() => { setShowOTP(false); setOTP(''); setWrongOTP(false); }}
+                centered show={showOTP}
+                onHide={() => {
+                    setShowOTP(false);
+                    setOTP('');
+                    setWrongOTP(false);
+                }}
             >
-                <Modal.Header closeButton className={`bg-${theme}`}>
+                <Modal.Header closeButton className={` bg-body-tertiary text-${theme === 'dark' ? 'light' : 'dark'}-emphasis`}>
                     <Modal.Title>Verify OTP</Modal.Title>
                 </Modal.Header>
-                <Modal.Body className={`bg-${theme}`}>
+                <Modal.Body className={` bg-body-tertiary text-${theme === 'dark' ? 'light' : 'dark'}-emphasis`} >
                     {otpVerifyLoading ?
                         <Loader title='Verifying OTP' color='green' />
                         :
-                        <form>
+                        <form onSubmit={verify}>
                             <h4 className='text-center' >Enter Your OTP</h4>
                             <div className="mb-3">
                                 <label htmlFor="otp" className="form-label">OTP</label>
@@ -127,7 +134,7 @@ const ResetPassword = () => {
                         </form>
                     }
                 </Modal.Body>
-                <Modal.Footer className={`bg-${theme}`}>
+                <Modal.Footer className={` bg-body-tertiary text-${theme === 'dark' ? 'light' : 'dark'}-emphasis`}>
                     <Button variant="secondary" onClick={() => { setShowOTP(false); setOTP(''); setWrongOTP(false); }}>
                         cancel
                     </Button>
@@ -138,18 +145,19 @@ const ResetPassword = () => {
 
             {/* Modal for set new password*/}
             <Modal
+                data-bs-theme={theme}
                 size="lg"
                 aria-labelledby="contained-modal-title-vcenter"
                 centered show={showNewPasswordModal} onHide={() => { setShowNewPasswordModal(false); }}
             >
-                <Modal.Header closeButton className={`bg-${theme}`}>
+                <Modal.Header closeButton className={` bg-body-tertiary text-${theme === 'dark' ? 'light' : 'dark'}-emphasis`}>
                     <Modal.Title>Enter New Password</Modal.Title>
                 </Modal.Header>
-                <Modal.Body className={`bg-${theme}`}>
+                <Modal.Body className={` bg-body-tertiary text-${theme === 'dark' ? 'light' : 'dark'}-emphasis`}>
                     {resetPasswordLoading ?
                         <Loader title='Resting Password' color='green' />
                         :
-                        <form>
+                        <form onSubmit={SetNewPassword}>
                             <label htmlFor="password" className="form-label">Enter Your New Password</label>
                             <input key='newPassword' style={{ borderColor: newPasswordLengthError || matchPasswordCPasswordError ? '#dc3545' : '#ced4da' }} type={showHidePassword} name='password' className="form-control" id="password" onChange={(event) => setNewPassword(event.target.value)} />
                             <div style={{ height: '30px', color: '#dc3545' }} >{newPasswordLengthError ? 'Password length must be at least 8 characters.' : ''}</div>
@@ -165,7 +173,7 @@ const ResetPassword = () => {
                         </form>
                     }
                 </Modal.Body>
-                <Modal.Footer className={`bg-${theme}`}>
+                <Modal.Footer className={` bg-body-tertiary text-${theme === 'dark' ? 'light' : 'dark'}-emphasis`}>
                     <Button variant="secondary" onClick={() => { setShowNewPasswordModal(false); }}>
                         cancel
                     </Button>

@@ -17,13 +17,13 @@ const NoteState = (props) => {
         //eslint-disable-next-line
     }, [])
     //Get All Notes
-    const featchNotes = async () => {
+    const featchNotes = async (authToken) => {
         setLoading(true)
         try {
             const response = await fetch(`${host}/api/notes/getallnotes`, {
                 method: "GET",
                 headers: {
-                    "auth-token": iNoteBookUser.authToken
+                    "auth-token": iNoteBookUser ? iNoteBookUser.authToken : authToken
                 }
             });
             const data = await response.json()
@@ -84,7 +84,7 @@ const NoteState = (props) => {
             setProgress(70)
             let data = await response.json();
             setProgress(90)
-            console.log(data);
+            // console.log(data);
             updateAlert(data.status, data.msg)
             setNotes([...notes, data.createnote])
             setProgress(100)
@@ -134,7 +134,7 @@ const NoteState = (props) => {
 
 
     return (
-        <NoteContext.Provider value={{ notes, deleteNote, addNewNote, updateTheNote,setNotes }}>
+        <NoteContext.Provider value={{ notes, deleteNote, addNewNote, updateTheNote, setNotes, featchNotes }}>
             {props.children}
         </NoteContext.Provider>
     )

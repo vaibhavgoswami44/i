@@ -9,7 +9,7 @@ import noteContext from '../context/note/NoteContext';
 const Nav = () => {
     const { iNoteBookUser, setiNoteBookUser, updateTheme } = useContext(userContext)
     const { theme, setTheme } = useContext(generalContext)
-    const {setNotes} = useContext(noteContext)
+    const { setNotes } = useContext(noteContext)
 
     const active = useLocation()
     const navigate = useNavigate()
@@ -32,8 +32,8 @@ const Nav = () => {
     }
     return (
         <>
-            <nav className={`navbar navbar-${theme} navbar-expand-lg shadow`}>
-                <div className="container-fluid ">
+            <nav className={`navbar  navbar-expand-lg shadow bg-body-tertiary`} data-bs-theme={theme}>
+                <div className={`container-fluid `}>
                     <div className='d-flex flex-row align-items-center'>
                         <div className='d-flex flex-row align-items-center justify-content-center'>
                             <Link className="navbar-brand" to={iNoteBookUser ? `/profile` : '/'}>
@@ -51,8 +51,8 @@ const Nav = () => {
                         </div>
                     </div >
                     <div className='d-flex'>
-                        <div className='mx-3 mt-2'>
-                            <OverlayTrigger placement="bottom" overlay={<Tooltip id={`tooltip-edit-theme`} style={{ marginTop: '-8px', zIndex: '1300' }}>Enable {theme === 'dark' ? 'light' : 'dark'} mode</Tooltip>}>
+                        <OverlayTrigger placement="bottom" overlay={<Tooltip id={`tooltip-edit-theme`} style={{  zIndex: '1300' }}>Enable {theme === 'dark' ? 'light' : 'dark'} mode</Tooltip>}>
+                            <div className='mx-3 mt-2'>
                                 <div>
                                     <input type="checkbox" className="checkbox" onChange={changeTheme} id="chk" checked={theme === 'dark'} />
                                     <label className="label" htmlFor="chk">
@@ -61,8 +61,8 @@ const Nav = () => {
                                         <div className="ball"></div>
                                     </label>
                                 </div>
-                            </OverlayTrigger>
-                        </div>
+                            </div>
+                        </OverlayTrigger>
                         <button className="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
                             <span className="navbar-toggler-icon"></span>
                         </button>

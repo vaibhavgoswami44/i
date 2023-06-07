@@ -43,7 +43,8 @@ const UpdateEmail = () => {
         //eslint-disable-next-line
     }, []);
 
-    const verifyPassword = async () => {
+    const verifyPassword = async (event) => {
+        event.preventDefault()
         setLoader(true)
         setLoaderTitle('Verifying Password')
         setLoaderTextColor('green')
@@ -64,7 +65,8 @@ const UpdateEmail = () => {
             setLoaderTextColor('')
         }
     }
-    const updateEmail = async () => {
+    const updateEmail = async (event) => {
+        event.preventDefault()
         setLoader(true)
         setLoaderTitle('Updating Email')
         setLoaderTextColor('green')
@@ -95,28 +97,29 @@ const UpdateEmail = () => {
         <>
             {/* Modal */}
             <Modal
+                data-bs-theme={theme}
                 size="lg"
                 aria-labelledby="contained-modal-title-vcenter"
                 centered
                 show={show}
                 onHide={() => { setShow(false); setNewEmailForm(false); setTitle({ title: "Verify it's you" }); setEmailError(false); setshowHidePassword('password'); }}
             >
-                <Modal.Header closeButton className={`bg-${theme}`}>
+                <Modal.Header closeButton className={` bg-body-tertiary text-${theme === 'dark' ? 'light' : 'dark'}-emphasis`}>
                     <Modal.Title>{title.title}</Modal.Title>
                 </Modal.Header>
                 {loader ?
-                    <Modal.Body className={`bg-${theme}`}>
+                    <Modal.Body className={` bg-body-tertiary text-${theme === 'dark' ? 'light' : 'dark'}-emphasis`}>
                         <Loader title={loaderTitle} color={loaderTextColor} />
                     </Modal.Body>
                     :
-                    <Modal.Body className={`bg-${theme}`} >
+                    <Modal.Body className={` bg-body-tertiary text-${theme === 'dark' ? 'light' : 'dark'}-emphasis`} >
                         {newEmailForm ?
-                            <form>
+                            <form onSubmit={updateEmail}>
                                 <label htmlFor="email" className="form-label">Enter New Email</label>
                                 <input key='email' type='email' name='email' className="form-control" style={{ borderColor: emailError ? '#dc3545' : '#ced4da' }} id="email" onChange={(event) => setNewEmail(event.target.value)} />
                                 <div style={{ height: '30px', color: '#dc3545' }} >{emailError ? 'Email Already Exists' : ''}</div>
                             </form>
-                            : <form>
+                            : <form onSubmit={verifyPassword}>
                                 <label htmlFor="password" className="form-label">Enter Your Password</label>
                                 <input key='emailVerifyPasswordKey' type={showHidePassword} name='password' className="form-control" style={{ borderColor: wrongPassword ? '#dc3545' : '#ced4da' }} id="password" onChange={(event) => setPassword(event.target.value)} />
                                 <div style={{ height: '30px', color: '#dc3545' }} >{wrongPassword ? 'Wrong Password' : ''}</div>
@@ -131,7 +134,7 @@ const UpdateEmail = () => {
                         }
                     </Modal.Body>
                 }
-                <Modal.Footer className={`bg-${theme}`}>
+                <Modal.Footer className={` bg-body-tertiary text-${theme === 'dark' ? 'light' : 'dark'}-emphasis`}>
                     <Button variant="secondary" onClick={() => { setShow(false); setNewEmailForm(false); setTitle({ title: "Verify it's you" }); setEmailError(false); setshowHidePassword('password'); }}>
                         cancel
                     </Button>
@@ -145,7 +148,7 @@ const UpdateEmail = () => {
             <div className='mt-2'>
                 <span className='d-block'>Email</span>
                 <span className=' text-muted me-3' >{email}</span>
-                <Button className={`mt-1 btn btn-${theme} `} variant="primary" onClick={() => setShow(true)}>
+                <Button className={`mt-1 btn btn-light `} variant="primary" onClick={() => setShow(true)}>
                     Change Email
                 </Button>
             </div>

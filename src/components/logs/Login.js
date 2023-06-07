@@ -2,9 +2,11 @@ import React, { useContext, useState } from 'react'
 import { Link, useLocation, useNavigate } from 'react-router-dom'
 import userContext from '../../context/user/UserContext'
 import Loader from '../Loader'
+import noteContext from '../../context/note/NoteContext'
 
 const Login = () => {
     const { login } = useContext(userContext)
+    const { featchNotes } = useContext(noteContext)
     const navigate = useNavigate()
     const location = useLocation()
     const [loginCredentials, setLoginCredentials] = useState({ email: location.state ? location.state.email : '', password: '' })
@@ -20,6 +22,7 @@ const Login = () => {
         // console.log(a);
         if (a.status === 'success') {
             navigate('/')
+            await featchNotes(a.authToken)
         }
         setLoader(false)
     }

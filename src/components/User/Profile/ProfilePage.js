@@ -11,7 +11,7 @@ import generalContext from '../../../context/general/generalContext';
 const ProfilePage = () => {
   const { getLoggedinUserData, updateUserDetails } = useContext(userContext);
   const { updateAlert } = useContext(alertContext)
-  const { theme, loading, setLoading } = useContext(generalContext)
+  const {  loading, setLoading } = useContext(generalContext)
   //user details
   const [user, setUser] = useState({ profilePicture: '', birthDate: '', gender: '', name: '' });
   const [imageSrc, setImageSrc] = useState(undefined);
@@ -102,7 +102,7 @@ const ProfilePage = () => {
               <label className="ms-1 form-label">Female</label>
             </div>
             <div className=' d-flex align-items-center flex-column' >
-              <button type="submit" className={`btn btn-${theme} `}>Update Profile</button>
+              <button type="submit" className={`btn btn-light `}>Update Profile</button>
             </div>
           </form>
         </div>
